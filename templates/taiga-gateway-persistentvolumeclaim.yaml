@@ -1,13 +1,32 @@
 {{- if .Values.taigaGateway.persistence.enabled }}
+{{- $gateway := .Values.taigaGateway.persistence -}}
+{{- if (not $gateway.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ template "taiga.fullname" . }}-gateway-data
+  annotations:
+  {{- range $key, $value := $gateway.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- if eq .Values.taigaGateway.persistence.resourcePolicy "keep" }}
+    helm.sh/resource-policy: keep
+  {{- end }}
+  labels:
+{{ include "taiga.labels" . | indent 4 }}
+    component: gateway-persistent
 spec:
   accessModes:
   - {{ .Values.taigaGateway.persistence.accessMode }}
-  storageClassName: {{ .Values.taigaGateway.persistence.storageClassName}}
   resources:
     requests:
       storage: {{ .Values.taigaGateway.persistence.size }}
+  {{- if $gateway.storageClass }}
+    {{- if eq "-" $gateway.storageClass }}
+  storageClassName: ""
+    {{- else }}
+  storageClassName: {{ $gateway.storageClass }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 {{- end }}

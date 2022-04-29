@@ -1,0 +1,25 @@
+version: 3
+
+tasks:
+  default:
+    cmds:
+      - task -l
+
+  update:
+    desc: Update dependencies Chart
+    silent: true
+    cmds:
+      - cd ./ && helm dependency update
+
+  delete:
+    desc: Update dependencies Chart
+    silent: true
+    cmds:
+      - helm delete taiga -n taiga-test
+
+  local:test:
+    desc: Test install in local
+    deps:
+      - update
+    cmds:
+      - helm upgrade --install taiga --create-namespace ./ -f tests/values-test.yaml -n taiga-test

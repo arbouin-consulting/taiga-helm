@@ -1,13 +1,32 @@
 {{- if .Values.persistence.static.enabled }}
+{{- $static := .Values.persistence.static -}}
+{{- if (not $static.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ template "taiga.fullname" . }}-static-data
+  annotations:
+  {{- range $key, $value := $static.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- if eq .Values.persistence.resourcePolicy "keep" }}
+    helm.sh/resource-policy: keep
+  {{- end }}
+  labels:
+  {{ include "taiga.labels" . | indent 4 }}
+    component: static-persistent
 spec:
   accessModes:
   - {{ .Values.persistence.static.accessMode }}
-  storageClassName: {{ .Values.persistence.static.storageClassName}}
   resources:
     requests:
       storage: {{ .Values.persistence.static.size }}
+  {{- if $static.storageClass }}
+    {{- if eq "-" $static.storageClass }}
+  storageClassName: ""
+    {{- else }}
+  storageClassName: {{ $static.storageClass }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 {{- end }}

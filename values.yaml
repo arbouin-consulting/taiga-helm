@@ -4,15 +4,18 @@ imagePullSecrets: []
 # - name: "image-pull-secret"
 
 persistence:
+  resourcePolicy: keep
   media:
     ## Volume used to store the Taiga Gateway's data. Default is boolean `false`.
     ##
     enabled: false
     size: '100Mi'
+    accessMode: 'ReadWriteOnce'
     ## Sets persistent volume claim's storageClassName. Defaults to `default`.
     ##
-    storageClassName: 'default'
-    accessMode: 'ReadWriteOnce'
+    storageClass: ""
+    annotations: {}
+    existingClaim: ""
   static:
     ## Volume used to store the Taiga Gateway's data. Default is boolean `false`.
     ##
@@ -20,8 +23,10 @@ persistence:
     size: '100Mi'
     ## Sets persistent volume claim's storageClassName. Defaults to `default`.
     ##
-    storageClassName: 'default'
     accessMode: 'ReadWriteOnce'
+    storageClass: ""
+    annotations: {}
+    existingClaim: ""
 
 env: 
   taigaURL: "http://localhost:9000"
@@ -83,7 +88,6 @@ env:
   maxAge: "360"
 
 taigaAsyncRabbitmq:
-
   image:
     repository: rabbitmq
     pullPolicy: IfNotPresent
@@ -96,8 +100,11 @@ taigaAsyncRabbitmq:
     size: '100Mi'
     ## Sets persistent volume claim's storageClassName. Defaults to `default`.
     ##
-    storageClassName: 'default'
     accessMode: 'ReadWriteOnce'
+    storageClass: ""
+    annotations: {}
+    resourcePolicy: keep
+    existingClaim: ""
 
   service:
     type: ClusterIP
@@ -126,7 +133,6 @@ taigaAsyncRabbitmq:
 
 
 taigaAsync:
-
   image:
     repository: taigaio/taiga-back      
     pullPolicy: IfNotPresent
@@ -159,11 +165,10 @@ taigaAsync:
 
   
 taigaBack:
-
   image:
     repository: taigaio/taiga-back
     pullPolicy: IfNotPresent
-    tag: " {{ .Chart.AppVersion }}"
+    tag: "{{ .Chart.AppVersion }}"
 
   service:
     type: ClusterIP
@@ -190,54 +195,23 @@ taigaBack:
 
   affinity: {}
 
-
-taigaDB:
-
-  enable: true
-
-  image:
-    repository: postgres     
-    pullPolicy: IfNotPresent
-    tag: "12.3"
-
-  persistence:
-    ## Volume used to store Taiga DB data. Default is boolean `false`.
-    ##
+postgresql:
+  # If `true`, the Postgresql dependency is enabled
+  enabled: true
+  fullnameOverride: "taiga-db"
+  auth:
+    # PostgreSQL User to create
+    username: taiga
+    # PostgreSQL Password for the new user
+    postgresPassword: taiga
+    password: taiga
+    # PostgreSQL Database to create
+    database: taiga
+  # PostgreSQL network policy configuration
+  networkPolicy:
     enabled: false
-    size: '100Mi'
-    ## Sets persistent volume claim's storageClassName. Defaults to `default`.
-    ##
-    storageClassName: 'default'
-    accessMode: 'ReadWriteOnce'
-
-  service:
-    type: ClusterIP
-    port: 5432
-
-  podAnnotations: {}
-
-  podSecurityContext: {}
-    # fsGroup: 2000
-
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
-
-  resources: {}
-
-  nodeSelector: {}
-
-  tolerations: []
-
-  affinity: {}
-
 
 taigaEventsRabbitmq:
-
   image:
     repository: rabbitmq      
     pullPolicy: IfNotPresent
@@ -250,8 +224,11 @@ taigaEventsRabbitmq:
     size: '100Mi'
     ## Sets persistent volume claim's storageClassName. Defaults to `default`.
     ##
-    storageClassName: 'default'
     accessMode: 'ReadWriteOnce'
+    storageClass: ""
+    annotations: {}
+    resourcePolicy: keep
+    existingClaim: ""
 
   service:
     type: ClusterIP
@@ -280,7 +257,6 @@ taigaEventsRabbitmq:
 
 
 taigaEvents:
-
   image:
     repository: taigaio/taiga-events     
     pullPolicy: IfNotPresent
@@ -313,7 +289,6 @@ taigaEvents:
 
 
 taigaFront:
-
   image:
     repository: taigaio/taiga-front  
     pullPolicy: IfNotPresent
@@ -346,7 +321,6 @@ taigaFront:
 
 
 taigaGateway:
-
   image:
     repository: nginx    
     pullPolicy: IfNotPresent
@@ -359,8 +333,11 @@ taigaGateway:
     size: '100Mi'
     ## Sets persistent volume claim's storageClassName. Defaults to `default`.
     ##
-    storageClassName: 'default'
     accessMode: 'ReadWriteOnce'
+    storageClass: ""
+    annotations: {}
+    resourcePolicy: keep
+    existingClaim: ""
 
   ingress:
     enable: false

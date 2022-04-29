@@ -1,0 +1,52 @@
+env:
+  taigaURL: "http://issues.test.local"
+  taigaWebsocketsURL: "ws://issues.test.local:9000"
+  taigaSitesDomain: "issues.test.local:9000"
+  enableSlack: "true"
+#    postgresHost: ""
+  postgresUser: taiga
+  postgresPassword: taiga
+  postgresDB: taiga
+  maxAge: "360"
+taigaGateway:
+  persistence:
+    enabled: true
+  image:
+    tag: 1.21.6-alpine
+  ingress:
+    enable: true
+    annotations:
+#        cert-manager.io/cluster-issuer: letsencrypt-prod
+#        kubernetes.io/ingress.class: nginx
+#        kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+#        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    hosts:
+      - issues.test.local
+    tls:
+      - hosts:
+          - issues.test.local
+        secretName: issues-secret
+#  postgres:
+#    enable: false
+taigaFront:
+  image:
+    tag: "6.5.1"
+taigaBack:
+  image:
+    tag: "6.5.1"
+taigaEvents:
+  image:
+    tag: "6.5.0"
+taigaProtected:
+  image:
+    tag: "6.5.0"
+taigaAsync:
+  image:
+    tag: "6.5.1"
+
+persistence:
+  media:
+    enabled: true
+  static:
+    enabled: true

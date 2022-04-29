@@ -1,13 +1,32 @@
 {{- if .Values.persistence.media.enabled }}
+{{- $media := .Values.persistence.media -}}
+{{- if (not $media.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ template "taiga.fullname" . }}-media-data
+  annotations:
+  {{- range $key, $value := $media.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- if eq .Values.persistence.resourcePolicy "keep" }}
+    helm.sh/resource-policy: keep
+  {{- end }}
+  labels:
+  {{ include "taiga.labels" . | indent 4 }}
+    component: media-persistent
 spec:
   accessModes:
   - {{ .Values.persistence.media.accessMode }}
-  storageClassName: {{ .Values.persistence.media.storageClassName}}
   resources:
     requests:
       storage: {{ .Values.persistence.media.size }}
+  {{- if $media.storageClass }}
+    {{- if eq "-" $media.storageClass }}
+  storageClassName: ""
+    {{- else }}
+  storageClassName: {{ $media.storageClass }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 {{- end }}
