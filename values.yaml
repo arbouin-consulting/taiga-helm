@@ -3,6 +3,13 @@
 imagePullSecrets: []
 # - name: "image-pull-secret"
 
+fullnameOverride: ""
+nameOverride: ""
+
+serviceAccount:
+  create: false
+  name: ""
+
 persistence:
   resourcePolicy: keep
   media:
@@ -136,7 +143,7 @@ taigaAsync:
   image:
     repository: taigaio/taiga-back      
     pullPolicy: IfNotPresent
-    tag: "{{ .Chart.AppVersion }}"
+    tag: "6.4.2"
 
   service:
     type: ClusterIP
@@ -168,7 +175,7 @@ taigaBack:
   image:
     repository: taigaio/taiga-back
     pullPolicy: IfNotPresent
-    tag: "{{ .Chart.AppVersion }}"
+    tag: "6.4.2"
 
   service:
     type: ClusterIP
@@ -207,9 +214,6 @@ postgresql:
     password: taiga
     # PostgreSQL Database to create
     database: taiga
-  # PostgreSQL network policy configuration
-  networkPolicy:
-    enabled: false
 
 taigaEventsRabbitmq:
   image:
@@ -292,7 +296,7 @@ taigaFront:
   image:
     repository: taigaio/taiga-front  
     pullPolicy: IfNotPresent
-    tag: "{{ .Chart.AppVersion }}"
+    tag: "6.4.2"
 
   service:
     type: ClusterIP
@@ -324,23 +328,10 @@ taigaGateway:
   image:
     repository: nginx    
     pullPolicy: IfNotPresent
-    tag: "1.19-alpine"
-
-  persistence:
-    ## Volume used to store the Taiga Gateway's data. Default is boolean `false`.
-    ##
-    enabled: false
-    size: '100Mi'
-    ## Sets persistent volume claim's storageClassName. Defaults to `default`.
-    ##
-    accessMode: 'ReadWriteOnce'
-    storageClass: ""
-    annotations: {}
-    resourcePolicy: keep
-    existingClaim: ""
+    tag: "1.21.6-alpine"
 
   ingress:
-    enable: false
+    enabled: false
     annotations:
     # traefik.ingress.kubernetes.io/router.entrypoints: websecure
     # traefik.ingress.kubernetes.io/router.tls: 'true'
@@ -381,7 +372,7 @@ taigaProtected:
   image:
     repository: taigaio/taiga-protected     
     pullPolicy: IfNotPresent
-    tag: "{{ .Chart.AppVersion }}"
+    tag: "6.4.0"
 
   service:
     type: ClusterIP

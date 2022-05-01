@@ -13,7 +13,7 @@ metadata:
     helm.sh/resource-policy: keep
   {{- end }}
   labels:
-  {{ include "taiga.labels" . | indent 4 }}
+{{ include "taiga.labels" . | indent 4 }}
     component: media-persistent
 spec:
   accessModes:

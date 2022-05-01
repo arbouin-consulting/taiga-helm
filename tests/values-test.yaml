@@ -1,7 +1,8 @@
 env:
-  taigaURL: "http://issues.test.local"
-  taigaWebsocketsURL: "ws://issues.test.local:9000"
-  taigaSitesDomain: "issues.test.local:9000"
+  taigaURL: "https://issues.k8s.test.local"
+  taigaWebsocketsURL: "ws://issues.k8s.test.local:9000"
+  taigaSitesDomain: "issues.k8s.test.local:9000"
+  taigaSitesScheme: "https"
   enableSlack: "true"
 #    postgresHost: ""
   postgresUser: taiga
@@ -14,36 +15,38 @@ taigaGateway:
   image:
     tag: 1.21.6-alpine
   ingress:
-    enable: true
+    enabled: true
     annotations:
-#        cert-manager.io/cluster-issuer: letsencrypt-prod
-#        kubernetes.io/ingress.class: nginx
-#        kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: HTTP
-#        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     hosts:
-      - issues.test.local
+      - host: issues.k8s.test.local
+        paths:
+          - "/"
     tls:
       - hosts:
-          - issues.test.local
+          - issues.k8s.test.local
         secretName: issues-secret
 #  postgres:
 #    enable: false
-taigaFront:
-  image:
-    tag: "6.5.1"
-taigaBack:
-  image:
-    tag: "6.5.1"
-taigaEvents:
-  image:
-    tag: "6.5.0"
-taigaProtected:
-  image:
-    tag: "6.5.0"
-taigaAsync:
-  image:
-    tag: "6.5.1"
+#taigaFront:
+#  image:
+#    tag: "6.5.1"
+#taigaBack:
+#  image:
+#    tag: "6.5.1"
+#taigaEvents:
+#  image:
+#    tag: "6.5.0"
+#taigaProtected:
+#  image:
+#    tag: "6.5.0"
+#taigaAsync:
+#  image:
+#    tag: "6.5.1"
 
 persistence:
   media:
