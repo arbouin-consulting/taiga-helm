@@ -206,14 +206,15 @@ postgresql:
   # If `true`, the Postgresql dependency is enabled
   enabled: true
   fullnameOverride: "taiga-db"
-  auth:
-    # PostgreSQL User to create
-    username: taiga
-    # PostgreSQL Password for the new user
-    postgresPassword: taiga
-    password: taiga
-    # PostgreSQL Database to create
-    database: taiga
+  # PostgreSQL User to create
+  postgresqlUsername: taiga
+  # PostgreSQL Password for the new user
+  postgresqlPassword: taiga
+  # PostgreSQL Database to create
+  postgresqlDatabase: taiga
+  # PostgreSQL network policy configuration
+  networkPolicy:
+    enabled: false
 
 taigaEventsRabbitmq:
   image:

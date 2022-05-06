@@ -17,19 +17,19 @@ taigaGateway:
   ingress:
     enabled: true
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
-      kubernetes.io/ingress.class: nginx
-      kubernetes.io/tls-acme: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+#      cert-manager.io/cluster-issuer: letsencrypt-prod
+#      kubernetes.io/ingress.class: nginx
+#      kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+#      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     hosts:
       - host: issues.k8s.test.local
         paths:
           - "/"
-    tls:
-      - hosts:
-          - issues.k8s.test.local
-        secretName: issues-secret
+#    tls:
+#      - hosts:
+#          - issues.k8s.test.local
+#        secretName: issues-secret
 #  postgres:
 #    enable: false
 #taigaFront:
