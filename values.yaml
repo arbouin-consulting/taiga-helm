@@ -162,6 +162,9 @@ taigaAsync:
     # runAsNonRoot: true
     # runAsUser: 1000
 
+  extraEnv:
+
+
   resources: {}
 
   nodeSelector: {}
@@ -180,6 +183,8 @@ taigaBack:
   service:
     type: ClusterIP
     port: 8000
+
+  existingSecret: ""
 
   podAnnotations: {}
 
