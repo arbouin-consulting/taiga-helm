@@ -23,3 +23,17 @@ tasks:
       - update
     cmds:
       - helm upgrade --install taiga --create-namespace ./ -f tests/values-test.yaml -n taiga-test
+
+  build:
+    desc: Build helm chart
+    deps:
+      - update
+    cmds:
+      - helm package .
+
+  push:
+    desc: Push helm chart
+    deps:
+      - build
+    cmds:
+      - helm cm-push taiga-*.tgz arcons-ci
