@@ -30,6 +30,14 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "taiga.namespace" -}}
+  {{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+  {{- else -}}
+    {{- .Release.Namespace -}}
+  {{- end -}}
+{{- end -}}
+
 {{/*
 Common labels
 */}}
@@ -61,7 +69,6 @@ Create the name of the service account to use
 {{- end }}
 {{- end }}
 
-
 {{/*
 Set value for Postgres Host
 */}}
@@ -72,3 +79,21 @@ Set value for Postgres Host
 {{- printf "%s-db" (include "taiga.fullname" .) }}
 {{- end }}
 {{- end }}
+
+{{- define "taiga.ingress.apiVersion" -}}
+  {{- if and (.Capabilities.APIVersions.Has "networking.k8s.io/v1") (semverCompare ">= 1.19-0" .Capabilities.KubeVersion.Version) -}}
+    {{- print "networking.k8s.io/v1" -}}
+  {{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" -}}
+    {{- print "networking.k8s.io/v1beta1" -}}
+  {{- else -}}
+    {{- print "extensions/v1beta1" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "taiga.ingress.isStable" -}}
+  {{- eq (include "taiga.ingress.apiVersion" .) "networking.k8s.io/v1" -}}
+{{- end -}}
+
+{{- define "taiga.ingress.supportsIngressClassName" -}}
+  {{- or (eq (include "taiga.ingress.isStable" .) "true") (and (eq (include "taiga.ingress.apiVersion" .) "networking.k8s.io/v1beta1") (semverCompare ">= 1.18-0" .Capabilities.KubeVersion.Version)) -}}
+{{- end -}}

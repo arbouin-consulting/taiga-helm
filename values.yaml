@@ -1,10 +1,26 @@
 # Default values for taiga.
-
 imagePullSecrets: []
 # - name: "image-pull-secret"
 
 fullnameOverride: ""
 nameOverride: ""
+namespaceOverride: ""
+
+global:
+  image:
+    # -- Overrides the global Argo CD image tag whose default is the chart appVersion
+    tag: "6.4.2"
+    # -- If defined, a imagePullPolicy applied to all Argo CD deployments
+    imagePullPolicy: IfNotPresent
+  # -- Annotations for the all deployed pods
+  podAnnotations: {}
+  # -- Labels for the all deployed pods
+  podLabels: {}
+  # -- Toggle and define securityContext. See [values.yaml]
+  securityContext: {}
+  #  runAsUser: 999
+  #  runAsGroup: 999
+  #  fsGroup: 999
 
 serviceAccount:
   create: false
@@ -139,12 +155,11 @@ taigaAsyncRabbitmq:
 
   affinity: {}
 
-
 taigaAsync:
   image:
-    repository: taigaio/taiga-back      
-    pullPolicy: IfNotPresent
-    tag: "6.4.2"
+    repository: taigaio/taiga-back
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
+    tag: "{{ .Values.global.image.tag }}"
 
   service:
     type: ClusterIP
@@ -165,7 +180,6 @@ taigaAsync:
 
   extraEnv:
 
-
   resources: {}
 
   nodeSelector: {}
@@ -178,8 +192,8 @@ taigaAsync:
 taigaBack:
   image:
     repository: taigaio/taiga-back
-    pullPolicy: IfNotPresent
-    tag: "6.4.2"
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
+    tag: "{{ .Values.global.image.tag }}"
 
   service:
     type: ClusterIP
@@ -266,11 +280,10 @@ taigaEventsRabbitmq:
 
   affinity: {}
 
-
 taigaEvents:
   image:
-    repository: taigaio/taiga-events     
-    pullPolicy: IfNotPresent
+    repository: taigaio/taiga-events
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
     tag: "6.1.1"
 
   service:
@@ -301,9 +314,9 @@ taigaEvents:
 
 taigaFront:
   image:
-    repository: taigaio/taiga-front  
-    pullPolicy: IfNotPresent
-    tag: "6.4.2"
+    repository: taigaio/taiga-front
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
+    tag: "{{ .Values.global.image.tag }}"
 
   service:
     type: ClusterIP
@@ -333,8 +346,8 @@ taigaFront:
 
 taigaGateway:
   image:
-    repository: nginx    
-    pullPolicy: IfNotPresent
+    repository: nginx
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
     tag: "1.21.6-alpine"
 
   ingress:
@@ -347,6 +360,12 @@ taigaGateway:
       - host: taiga.example.com
         paths:
           -  "/"
+
+    tls:
+      []
+      # - secretName: chart-example-tls
+      #   hosts:
+      #     - chart-example.local
 
   service:
     type: ClusterIP
@@ -375,10 +394,9 @@ taigaGateway:
 
 
 taigaProtected:
-
   image:
-    repository: taigaio/taiga-protected     
-    pullPolicy: IfNotPresent
+    repository: taigaio/taiga-protected
+    pullPolicy: "{{ .Values.global.image.pullPolicy }}"
     tag: "6.4.0"
 
   service:

@@ -13,3 +13,4 @@ spec:
   selector:
     {{- include "taiga.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: taiga-gateway
+  type: ClusterIP
